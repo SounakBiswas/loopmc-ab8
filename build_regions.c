@@ -93,6 +93,8 @@ int main(){
   free(match);
   free(vptr);
   free(fnbr);
+  free(pedges_i);
+  free(pedges_j);
 
    
 

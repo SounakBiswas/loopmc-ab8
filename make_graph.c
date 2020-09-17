@@ -69,5 +69,60 @@ void ntiles(int ninfl, int *nt, int *nr){
   }
 
 }
+void init_parallel_edges(){
+  int i,nbr_i1,nbr_i2,j;
+  int e1,e2,e3;//edges
+  pedges_i=(int*)malloc(nedges*4*sizeof(int));
+  pedges_j=(int*)malloc(nedges*4*sizeof(int));
+  int ctr;
+  double tol=1e-4;
+  double xdiff,ydiff;
+  double dist;
+  for(i=0; i<n_vtx; i+=1){
+    for(e1=fnbr[i]; e1<fnbr[i+1]; e1++){
+      ctr=0;
+      nbr_i1=vptr[e1];
+      for(e2=fnbr[i]; e2<fnbr[i+1]; e2++){
+        nbr_i2=vptr[e2];
+        if(nbr_i2!=nbr_i1){
+          for(e3=fnbr[nbr_i2]; e3<fnbr[nbr_i2+1]; e3+=1){
+            j=vptr[e3];
+            dist=(xpos[j]-xpos[nbr_i1])*(xpos[j]-xpos[nbr_i1])+(ypos[j]-ypos[nbr_i1])*(ypos[j]-ypos[nbr_i1]);
+            if((j!=i)&&(fabs(dist-1.0)<tol)){
+              pedges_i[2*e1+ctr]=nbr_i2;;
+              pedges_j[2*e1+ctr]=j;;
+              ctr+=1;
+              assert(ctr<=2);
+            }
+          }
+
+        }
+      }
+      if(ctr==1){
+        pedges_i[2*e1+1]=-1;
+        pedges_j[2*e1+1]=-1;
+
+      }
+    }
+  }
+}
+
+void make_orien(){
+  int edge=0;
+  int site,site2;
+  double phi;
+  int i,j;
+  for(i=0; i<n_vtx; i++){
+      for(j=fnbr[i];j<fnbr[i+1];j++){
+	site=i;
+	site2=vptr[j];
+	phi=atan2(ypos[site2]-ypos[site],xpos[site2]-xpos[site])/(2*M_PI);
+	orien[edge]=round(phi*8);
+
+	edge++;
+      }
+  }
+
+}
 
 
