@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "math.h"
 #include "global.h"
-int nedges;
+int make_orien();
 void ntiles(int,int*,int*);
 void make_nbrs();
 void find_charge();
@@ -10,6 +10,7 @@ int find_maxmatch();
 void find_sitetypes();
 void make_rtype();
 void addvtx(double ax,double ay);
+void init_parallel_edges();
 
 
 int main(){
@@ -42,7 +43,7 @@ int main(){
     if(line%1000==0)
       printf("line=%d \n",line);
   }
-  printf("nvertices=%d \n",n_vtx);
+  printf("nvertices,h=%d \n",n_vtx);
   fclose(fp);
 
   xpos=(double *)realloc(xpos, n_vtx*sizeof(double));
@@ -57,6 +58,7 @@ int main(){
   }
   printf("edges: %d \n",nedges);
   find_charge();
+  
   int mmatch=find_maxmatch();
   printf("max matching: %d \n",mmatch);
   find_sitetypes();
@@ -85,11 +87,13 @@ int main(){
 
 
 
+  free(charge);
   free(xpos);
   free(ypos);
   free(match);
   free(vptr);
   free(fnbr);
+
    
 
 

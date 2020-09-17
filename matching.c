@@ -250,6 +250,7 @@ void make_rtype(){
     fclose(fp[i]);
 
   }
+  free(fp);
   printf("nvtx=%d\n",n_vtx);
   gp=fopen("./clust0p.dat","w");
   for(i=0; i<n_vtx; i++){
@@ -260,5 +261,7 @@ void make_rtype(){
 
 
   free(sitetype);
+  free(burn);
+  free(pocket);
 
 }
