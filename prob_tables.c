@@ -113,10 +113,10 @@ void construct_probtabs(){
   //counting loop
   int n_ptab_entries=0;;
   for(ncoord=2; ncoord<=8; ncoord++){
+    ptab_start[ncoord]=n_ptab_entries;
     nconfigs=round(pow(3,ncoord));
     //for(config=0; config<nconfigs; config+=1){
     n_ptab_entries+=nconfigs*ncoord*ncoord;
-    ptab_start[ncoord]=n_ptab_entries;
   }
   probtab=(double*)malloc(n_ptab_entries*sizeof(double));
   printf("ptab entries:%d size:%f\n",n_ptab_entries,8.0*n_ptab_entries/(pow(1024,3.0)));
