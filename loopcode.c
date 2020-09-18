@@ -14,6 +14,7 @@ void measure(){
     for(i=0;i<5;i++)
       dorien[i]=0;
     n_flippable=0;
+    n_flippable2=0;
   }
   for(i=0;i<n_vtx;i++){
     mdensity[i]+=(match[i]==-1);
@@ -38,20 +39,23 @@ void measure(){
   temp_nf=0;
   for(i=0; i<n_vtx; i++){
     for(edge=fnbr[i];edge<fnbr[i+1];edge++){
-      s1=pedges_i[2*edge];
-      s2=pedges_j[2*edge];
-      if(match[s1]==s2)
-        temp_nf+=1;
-      if(pedges_i[2*edge+1]!=-1){
-        s1=pedges_i[2*edge+1];
-        s2=pedges_j[2*edge+1];
+      if(match[i]==vptr[edge]){
+        s1=pedges_i[2*edge];
+        s2=pedges_j[2*edge];
         if(match[s1]==s2)
           temp_nf+=1;
-      }
+        if(pedges_i[2*edge+1]!=-1){
+          s1=pedges_i[2*edge+1];
+          s2=pedges_j[2*edge+1];
+          if(match[s1]==s2)
+            temp_nf+=1;
 
+        }
+      }
     }
   }
   n_flippable+=(temp_nf/4);
+  n_flippable2+=(temp_nf/4)*(temp_nf/4);
 
   if(nmeasure%binsize==(binsize-1)){
     FILE *binfp;
@@ -71,7 +75,7 @@ void measure(){
 
     binfp=fopen(binplaqfname,"a");
     fprintf(binfp,"%d %d ",binno,nmeasure);
-    fprintf(binfp,"%.16f ",n_flippable/((double)binsize));
+    fprintf(binfp,"%.16f %.16f",n_flippable/((double)binsize),n_flippable2/((double)binsize));
     fprintf(binfp,"\n");
     fclose(binfp);
     //binfp=fopen(bindorienfname,"a");
@@ -108,7 +112,7 @@ void basic_loop(){
   int nparallel;
   double *ptab_l;//local prob table;
   int entry_leg,exit_leg;
-  
+
   if(match[site2]!=-1){
     site=match[site2];
     assert(match[site2]!=-1);

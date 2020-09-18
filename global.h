@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include "math.h"
 #include <assert.h>
-#define RK_V -0.5
+#define RK_V 2.0
+#define TEMP 1.0
 double tol;
 double rk_v;
+double temperature;
 double *xpos,*ypos;
 int binsize;
 int binno;
@@ -33,7 +35,8 @@ char bindorienfname[250];
 char binplaqfname[250];
 double *mdensity;
 double *ddensity;
-int n_flippable;
+double n_flippable;
+double n_flippable2;
 double dorien[5];
 double *lcounts;
 double lspace;
@@ -41,3 +44,4 @@ int n_vtx;
 int nmeasure;
 double *probtab;
 int ptab_start[9];
+

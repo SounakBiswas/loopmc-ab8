@@ -22,6 +22,7 @@ void construct_probtabs();
 int main(){
   n_vtx=769;
   rk_v=RK_V;
+  temperature=TEMP;
   int cno=0;
   char fname[200];
   sprintf(fname,"./regions/clust%d.dat",cno);
