@@ -108,6 +108,7 @@ void basic_loop(){
   int nparallel;
   double *ptab_l;//local prob table;
   int entry_leg,exit_leg;
+  
   if(match[site2]!=-1){
     site=match[site2];
     assert(match[site2]!=-1);
@@ -137,6 +138,7 @@ void basic_loop(){
       ptab_l=(probtab+ptab_start[n_nbrs]+config*n_nbrs*n_nbrs);
       exit_leg=draw_exit_leg(entry_leg,ptab_l,n_nbrs);
       site3=vptr[fnbr[site]+exit_leg];
+      looplen+=2.0;
       if(match[site3]==-1){
         match[site3]=site;
         match[site]=site3;

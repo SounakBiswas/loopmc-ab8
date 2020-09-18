@@ -19,7 +19,7 @@ void init_parallel_edges();
 void construct_probtabs();
 
 
-void main(){
+int main(){
   n_vtx=769;
   rk_v=RK_V;
   int cno=0;
@@ -77,10 +77,17 @@ void main(){
   //ccorr_re=(double *)calloc(n_vtx*n_vtx,sizeof(double));
   //ccorr_im=(double *)calloc(n_vtx*n_vtx,sizeof(double));
 //  lcounts=(double *)calloc(n_vtx*n_vtx,sizeof(double));
+  for(i=0; i<10000; i++){
+      basic_loop();
+  }
+  double avg_looplen=looplen/(1.0*nloops);
+  int loops_in_mcstep=(1.0*n_vtx/(avg_looplen));
+  loops_in_mcstep=(loops_in_mcstep>2)?loops_in_mcstep:2;
+  printf("avg loop len=%f, loops=%d \n",avg_looplen,loops_in_mcstep);
 
 
   for(i=0; i<100000; i++){
-    for(j=0; j<100; j++)
+    for(j=0; j<loops_in_mcstep; j++)
       basic_loop();
   //  //for(j=0; j<20; j++)
   //  //  monomer_move();
@@ -126,6 +133,7 @@ void main(){
   free(lcounts);
   free(ddensity);
   free(orien);
+  return 1;
 
 
 
