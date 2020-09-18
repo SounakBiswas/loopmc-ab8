@@ -15,58 +15,13 @@ void basic_loop();
 void measure();
 void monomer_move();
 void init_genrand64(unsigned long long);
-void write_mmcors(int cno){
-  int i,j;
-  char fname[200];
-  for(i=0;i<n_vtx; i++){
-    sprintf(fname,"./mmcorrfiles/c%ds%dmmcorfile.dat",cno,i);
-    FILE *fp=fopen(fname,"w");
-    for(j=0; j<n_vtx; j++){
-      fprintf(fp,"%f ",1.0*n_vtx*(1.0/nloops)*mmcorr[i+n_vtx*j]);
-    }
-  fclose(fp);
-  }
-
-  for(i=0;i<n_vtx; i++){
-    sprintf(fname,"./mmcorrfiles/lc%ds%dmmcorfile.dat",cno,i);
-    FILE *fp=fopen(fname,"w");
-    for(j=0; j<n_vtx; j++){
-      fprintf(fp,"%f ",lcounts[i+n_vtx*j]);
-    }
-  fclose(fp);
-  }
-}
-void write_tmmcors(int cno){
-  int i,j;
-  char fname[200];
-  for(i=0;i<n_vtx; i++){
-    sprintf(fname,"./tmmcorrfiles/c%ds%dmmcorfile.dat",cno,i);
-    FILE *fp=fopen(fname,"w");
-    for(j=0; j<n_vtx; j++){
-      fprintf(fp,"%f ",1.0*(1.0/nmeasure)*tmmcorr[i+n_vtx*j]);
-    }
-  fclose(fp);
-  }
-
-}
-void write_ddcors(int cno){
-  int i,j;
-  char fname[200];
-  for(i=0;i<nedges; i++){
-    sprintf(fname,"./ddcorrfiles/c%ds%dddcorfile.dat",cno,i);
-    FILE *fp=fopen(fname,"w");
-    for(j=0; j<nedges; j++){
-      fprintf(fp,"%f ",1.0*(1.0/nmeasure)*ddcorr[i+nedges*j]);
-    }
-  fclose(fp);
-  }
-
-}
-
+void init_parallel_edges();
+void construct_probtabs();
 
 
 void main(){
-  n_vtx=26177;
+  n_vtx=769;
+  rk_v=RK_V;
   int cno=0;
   char fname[200];
   sprintf(fname,"./regions/clust%d.dat",cno);
@@ -94,7 +49,9 @@ void main(){
   printf("edges: %d \n",nedges);
   orien=(int *)malloc(nedges*sizeof(double));
   net_charge=find_charge();
-  make_orien();
+  init_parallel_edges();
+  //make_orien();
+  construct_probtabs();
   
   int mmatch=find_maxmatch();
   printf("max matching: %d \n",mmatch);
@@ -105,13 +62,14 @@ void main(){
   binsize=100;
   corr1=corr2=0;
   looplen=0;
-  sprintf(binmfname,"./outfiles/binfile_mon.dat");
-  sprintf(bindfname,"./outfiles/binfile_dim.dat");
-  sprintf(bincorrfname,"./outfiles/bincorrfile.dat");
-  sprintf(bindorienfname,"./outfiles/bindorienfile.dat");
+  sprintf(binmfname,"./outfiles/binfile_mon_v%.2f.dat",rk_v);
+  sprintf(bindfname,"./outfiles/binfile_dim_v%.2f.dat",rk_v);
+  sprintf(binplaqfname,"./outfiles/binfile_plaq_v%.2f.dat",rk_v);
+  sprintf(bincorrfname,"./outfiles/bincorrfile_v%.2f.dat",rk_v);
+  sprintf(bindorienfname,"./outfiles/bindorienfile_v%.2f.dat",rk_v);
   init_genrand64(4);
-  printf("charge10 %d charge11 %d netcharge %d",charge[10],charge[11],net_charge);
-  getchar();
+  //printf("charge10 %d charge11 %d netcharge %d",charge[10],charge[11],net_charge);
+  //getchar();
   int j;
 //  mmcorr=(double *)calloc(n_vtx*n_vtx,sizeof(double));
 //  tmmcorr=(double *)calloc(n_vtx*n_vtx,sizeof(double));
@@ -121,15 +79,16 @@ void main(){
 //  lcounts=(double *)calloc(n_vtx*n_vtx,sizeof(double));
 
 
-  //for(i=0; i<100000; i++){
-  //  for(j=0; j<100; j++)
-  //    basic_loop();
+  for(i=0; i<100000; i++){
+    for(j=0; j<100; j++)
+      basic_loop();
   //  //for(j=0; j<20; j++)
   //  //  monomer_move();
-  //  measure();
-  //  if(i%1000==0)
-  //    printf("%d \n",i);
-  //}
+    measure();
+    if(i%1000==0)
+      printf("%d \n",i);
+  }
+  free(probtab);
 
 
   sprintf(fname,"nodedata%d.dat",cno);
