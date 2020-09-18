@@ -78,6 +78,7 @@ void init_parallel_edges(){
   double tol=1e-4;
   double xdiff,ydiff;
   double dist;
+  tot_plaqs=0;
   for(i=0; i<n_vtx; i+=1){
     for(e1=fnbr[i]; e1<fnbr[i+1]; e1++){
       ctr=0;
@@ -103,8 +104,11 @@ void init_parallel_edges(){
         pedges_j[2*e1+1]=-1;
 
       }
+      tot_plaqs+=ctr;
     }
   }
+  tot_plaqs=tot_plaqs/8;
+
 }
 
 void make_orien(){

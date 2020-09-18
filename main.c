@@ -11,7 +11,7 @@ int find_maxmatch();
 void find_sitetypes();
 void make_rtype();
 void addvtx(double ax,double ay);
-void basic_loop();
+int basic_loop();
 void measure();
 void monomer_move();
 void init_genrand64(unsigned long long);
@@ -51,6 +51,7 @@ int main(){
   orien=(int *)malloc(nedges*sizeof(double));
   net_charge=find_charge();
   init_parallel_edges();
+  printf("total plaquettes: %d\n",tot_plaqs);
   //make_orien();
   construct_probtabs();
   
@@ -89,7 +90,7 @@ int main(){
 
   for(i=0; i<100000; i++){
     for(j=0; j<loops_in_mcstep; j++)
-      basic_loop();
+      while(!basic_loop());
   //  //for(j=0; j<20; j++)
   //  //  monomer_move();
     measure();

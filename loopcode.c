@@ -97,13 +97,12 @@ int draw_exit_leg(int entry_leg, double *ptab,int dim){
   return exit_leg;
 
 }
-void basic_loop(){
+int basic_loop(){
 
   int site;int site3;
   int n_nbrs;
   int startsite2;
   int temp;
-  nloops++;
   int site2=(int)(genrand64_real2()*n_vtx);
   int loopflag=0;
   int config;
@@ -112,6 +111,7 @@ void basic_loop(){
   int nparallel;
   double *ptab_l;//local prob table;
   int entry_leg,exit_leg;
+  int temp_looplen=0;
 
   if(match[site2]!=-1){
     site=match[site2];
@@ -143,6 +143,10 @@ void basic_loop(){
       exit_leg=draw_exit_leg(entry_leg,ptab_l,n_nbrs);
       site3=vptr[fnbr[site]+exit_leg];
       looplen+=2.0;
+      temp_looplen+=2;
+      if(temp_looplen>n_vtx*CUTOFF_FAC){
+        return 0;
+      }
       if(match[site3]==-1){
         match[site3]=site;
         match[site]=site3;
@@ -159,6 +163,8 @@ void basic_loop(){
 
     }
   }
+  nloops++;
+  return 1;
 
 }
 void monomer_move(){

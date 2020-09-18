@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include "math.h"
 #include <assert.h>
-#define RK_V 2.0
+#define RK_V -4.0
 #define TEMP 1.0
+#define CUTOFF_FAC 8.0
 double tol;
 double rk_v;
 double temperature;
@@ -37,6 +38,7 @@ double *mdensity;
 double *ddensity;
 double n_flippable;
 double n_flippable2;
+int tot_plaqs;
 double dorien[5];
 double *lcounts;
 double lspace;
