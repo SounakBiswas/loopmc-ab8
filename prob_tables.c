@@ -57,7 +57,10 @@ void lpp_wrapper(int dim,double *w,double *a){ //dim by dim detailed balance eq
   ret=solve(lp);
   assert(ret==0);
   get_variables(lp,row);
-  //printf("Objective value: %f\n", get_objective(lp));
+  //if(dim==3){
+  //  printf("Objective value: %f\n", get_objective(lp));
+  //  getchar();
+  //}
   //for(j = 0; j < Ncol; j++)
   //    printf("%s: %f\n", get_col_name(lp, j + 1), row[j]);
   vctr=0;
