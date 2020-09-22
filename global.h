@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include "math.h"
 #include <assert.h>
-#define RK_V -4.0
+#define RK_V 2.0
 #define TEMP 1.0
-#define CUTOFF_FAC 8.0
+#define CUTOFF_FAC 100.0
 double tol;
 double rk_v;
 double temperature;
+int *loopstack;
+int *lvisits;
 double *xpos,*ypos;
 int binsize;
 int binno;
@@ -28,7 +30,10 @@ double corr1,corr2;
 int *match;
 int *sitetype;
 int nloops;
+int nsloops;
+int nsloopctr;
 double looplen;
+double slooplen;
 char bindfname[250];
 char binmfname[250];
 char bincorrfname[250];

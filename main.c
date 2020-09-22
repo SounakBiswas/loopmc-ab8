@@ -12,6 +12,8 @@ void find_sitetypes();
 void make_rtype();
 void addvtx(double ax,double ay);
 int basic_loop();
+int loop_nocutoff();
+int short_loop();
 void measure();
 void monomer_move();
 void init_genrand64(unsigned long long);
@@ -20,7 +22,7 @@ void construct_probtabs();
 
 
 int main(){
-  n_vtx=769;
+  n_vtx=33;
   rk_v=RK_V;
   temperature=TEMP;
   int cno=0;
@@ -42,7 +44,11 @@ int main(){
   match=(int *)malloc(n_vtx*sizeof(double));
   charge=(int *)malloc(n_vtx*sizeof(double));
   make_nbrs();
+  loopstack=(int*)malloc(round(CUTOFF_FAC*n_vtx)*sizeof(int));
+  lvisits=(int*)malloc(round(CUTOFF_FAC*n_vtx)*sizeof(int));
   int i;
+  for(i=0; i<round(CUTOFF_FAC*n_vtx); i++)
+    lvisits[i]=-1;
   for(i=0;i<n_vtx;i++){
     match[i]=-1;
     charge[i]=-1;
@@ -61,6 +67,8 @@ int main(){
   ddensity=(double *)malloc(nedges*sizeof(double));
   binno=0;
   nloops=0;
+  nsloops=0;
+  nsloopctr=0;
   binsize=100;
   corr1=corr2=0;
   looplen=0;
@@ -69,7 +77,7 @@ int main(){
   sprintf(binplaqfname,"./outfiles/binfile_plaq_v%.2f.dat",rk_v);
   sprintf(bincorrfname,"./outfiles/bincorrfile_v%.2f.dat",rk_v);
   sprintf(bindorienfname,"./outfiles/bindorienfile_v%.2f.dat",rk_v);
-  init_genrand64(4);
+  init_genrand64(41);
   //printf("charge10 %d charge11 %d netcharge %d",charge[10],charge[11],net_charge);
   //getchar();
   int j;
@@ -80,21 +88,32 @@ int main(){
   //ccorr_im=(double *)calloc(n_vtx*n_vtx,sizeof(double));
 //  lcounts=(double *)calloc(n_vtx*n_vtx,sizeof(double));
   for(i=0; i<10000; i++){
+      //loop_nocutoff();
+     short_loop();
       basic_loop();
   }
   double avg_looplen=looplen/(1.0*nloops);
+  double avg_slooplen=slooplen/(1.0*nsloops);
   int loops_in_mcstep=(1.0*n_vtx/(avg_looplen));
+  int sloops_in_mcstep=(1.0*n_vtx/(avg_slooplen));
+  sloops_in_mcstep=(sloops_in_mcstep>2)?sloops_in_mcstep:2;
   loops_in_mcstep=(loops_in_mcstep>2)?loops_in_mcstep:2;
   printf("avg loop len=%f, loops=%d \n",avg_looplen,loops_in_mcstep);
+  printf("avg loop len=%f, loops=%d \n",avg_slooplen,sloops_in_mcstep);
+  //loops_in_mcstep=0;
+  getchar();
 
 
-  for(i=0; i<100000; i++){
+  for(i=0; i<2000000; i++){
+    if(i%10==0)
     for(j=0; j<loops_in_mcstep; j++)
       while(!basic_loop());
+    for(j=0; j<sloops_in_mcstep; j++)
+      while(!short_loop());
   //  //for(j=0; j<20; j++)
   //  //  monomer_move();
     measure();
-    if(i%1000==0)
+    if(i%10000==0)
       printf("%d \n",i);
   }
   free(probtab);
@@ -135,6 +154,7 @@ int main(){
   free(lcounts);
   free(ddensity);
   free(orien);
+  free(loopstack);
   return 1;
 
 
